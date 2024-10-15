@@ -30,7 +30,7 @@ class ProductServiceImpl : ProductService {
 
     @Transactional
     override fun createData() {
-        val count = 50
+        val count = 500000
         log.info("Creating $count test data entries")
         for (i in 1..count) {
             entityManager.persist(Product(i.toLong(), "Test$i"))
