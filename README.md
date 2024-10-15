@@ -1,3 +1,6 @@
 # Demo project - SpringBoot + Tomcat + Hibernate + Postgres
 
-Virtual Threads are conditionally enabled on Spring profile "vt"
+- Spring boot on Tomcat
+- Hibernate ORM
+- Joiner
+- Virtual threads (enabled conditionally on Spring profile "vt")

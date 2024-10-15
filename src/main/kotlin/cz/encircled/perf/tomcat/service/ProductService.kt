@@ -4,7 +4,7 @@ import cz.encircled.joiner.kotlin.JoinerKt
 import cz.encircled.joiner.kotlin.JoinerKtOps.eq
 import cz.encircled.joiner.kotlin.JoinerKtQueryBuilder.all
 import cz.encircled.perf.tomcat.model.Product
-import cz.encircled.perf.tomcat.model.QProduct
+import cz.encircled.perf.tomcat.model.QProduct.product
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface ProductService {
-    fun createData()
+    fun createData(startId: Int, perChunk: Int)
     fun findByName(name: String): Product?
 }
 
@@ -29,18 +29,24 @@ class ProductServiceImpl : ProductService {
     lateinit var joiner: JoinerKt
 
     @Transactional
-    override fun createData() {
-        val count = 500000
-        log.info("Creating $count test data entries")
-        for (i in 1..count) {
-            entityManager.persist(Product(i.toLong(), "Test$i"))
+    override fun createData(startId: Int, perChunk: Int) {
+        log.info("Creating $perChunk entries")
+
+        if (entityManager.find(Product::class.java, startId + 1) != null) {
+            log.info("Chunk already exists")
+            return
         }
-        log.info("Test data created")
+
+        for (i in 1..perChunk) {
+            val id = startId + i
+            entityManager.persist(Product(id.toLong(), "Test$id"))
+        }
+        log.info("Test data chunk created")
     }
 
     @Transactional(readOnly = true)
     override fun findByName(name: String): Product? {
-        return joiner.findOne(QProduct.product.all() where { it.name eq name })
+        return joiner.findOne(product.all() where { it.name eq name })
     }
 
 }
