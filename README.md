@@ -4,3 +4,5 @@
 - Hibernate ORM
 - Joiner
 - Virtual threads (enabled conditionally on Spring profile "vt")
+
+Run using docker compose
